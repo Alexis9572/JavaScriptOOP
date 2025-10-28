@@ -1,0 +1,14 @@
+{
+  "name": "mini-erp-delicia-oop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Mini-ERP Delicia - versión OOP (ES Modules)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "prompt-sync": "^4.2.0"
+  }
+}

@@ -26,7 +26,7 @@ class MenuController {
     }
     mostrarMenu() {
         console.log(chalk.magenta.bold('\n============================================='));
-        console.log(chalk.magenta.bold(`| BIENVENIDO A ${this.tienda.nombre.toUpperCase()}`));
+        console.log(chalk.magenta.bold(`                  BIENVENIDO                   `));
         console.log(chalk.magenta.bold('============================================='));
         console.log('1. Registrar Venta (Agregar al Carrito)');
         console.log('2. Listar Productos del Catálogo');

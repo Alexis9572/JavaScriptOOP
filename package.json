@@ -1,9 +1,9 @@
 {
-  "name": "mini-erp-delicia-oop",
+  "name": "mini-erp-delicia",
   "version": "1.0.0",
-  "type": "module",
-  "description": "Mini-ERP Delicia - versión OOP (ES Modules)",
+  "description": "Mini ERP con arquitectura OOP para gestión de ventas.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node app.js"
   },

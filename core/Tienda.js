@@ -1,64 +1,86 @@
+// core/Tienda.js
+
+import { Catalogo } from '../domain/Catalogo.js';
 import { Carrito } from '../domain/Carrito.js';
+import { Producto } from '../domain/Producto.js';
+import { Cliente } from '../domain/Cliente.js';
 
+/**
+ * Clase base para la gestión de la tienda (catálogo, carrito, ventas).
+ */
 export class Tienda {
-  constructor(nombre, catalogo) {
-    this.nombre = nombre;
-    this.catalogo = catalogo;
-    this.carrito = new Carrito();
-    this.ventas = []; // historial de ventas (item simples)
-  }
-
-  agregarProducto(prod) {
-    // no persistido en este ejercicio: prod debe ser instancia Producto
-    // asume que catalogo es manejado fuera
-    return true;
-  }
-
-  agregarAlCarritoPorId(idOrName, cantidad) {
-    // puede recibir id o nombre
-    if (!idOrName) return false;
-    let producto = null;
-    if (!Number.isNaN(Number(idOrName))) producto = this.catalogo.buscarPorId(Number(idOrName));
-    if (!producto) producto = this.catalogo.buscarPorNombre(idOrName);
-    if (!producto) return false;
-    try {
-      this.carrito.agregar(producto, cantidad);
-      return { producto, cantidad };
-    } catch (e) {
-      return false;
+    /**
+     * @param {string} nombre - Nombre de la tienda.
+     * @param {Catalogo} catalogo - Catálogo de productos.
+     */
+    constructor(nombre, catalogo) {
+        this.nombre = nombre;
+        this.catalogo = catalogo;
+        this.carrito = new Carrito();
+        // Almacena todos los ItemCarrito de todas las ventas para reportes
+        this.ventas = []; 
     }
-  }
 
-  finalizarCompra(cliente) {
-    // mover items del carrito a ventas y al cliente, luego vaciar carrito
-    const items = this.carrito.items().map(it => ({ producto: it.producto, cantidad: it.cantidad, subtotal: it.subtotal }));
-    // registrar ventas
-    items.forEach(it => this.ventas.push({ id: it.producto.id, nombre: it.producto.nombre, cantidad: it.cantidad }));
-    // registrar en cliente
-    if (cliente) cliente.agregarCompra(items);
-    // vaciar carrito
-    this.carrito.vaciar();
-    return items;
-  }
+    /**
+     * Agrega un producto al catálogo interno.
+     * @param {Producto} prod 
+     */
+    agregarProducto(prod) {
+        this.catalogo.agregar(prod);
+    }
 
-  verCarrito() {
-    const items = this.carrito.items();
-    if (items.length === 0) { console.log('\n' + 'El carrito está vacío.'); return; }
-    console.log('\nProducto'.padEnd(16) + 'Cant.'.padStart(6) + '   Precio'.padStart(8) + '   Subtotal'.padStart(10));
-    console.log('-'.repeat(50));
-    items.forEach(it => {
-      console.log(it.producto.nombre.padEnd(16) + String(it.cantidad).padStart(6) + '   ' + it.producto.precio.toFixed(2).padStart(8) + '   ' + it.subtotal.toFixed(2).padStart(10));
-    });
-  }
+    /**
+     * Agrega un producto al carrito resolviendo el producto desde el catálogo.
+     * @param {number} id - ID del producto.
+     * @param {number} cantidad - Cantidad a agregar.
+     * @returns {boolean} true si se agregó con éxito.
+     */
+    agregarAlCarritoPorId(id, cantidad) {
+        const producto = this.catalogo.buscarPorId(id);
+        
+        if (!producto) {
+            console.error(`\n[ERROR] Producto con ID ${id} no encontrado en el catálogo.`);
+            return false;
+        }
 
-  imprimirTotales() {
-    const subtotal = this.carrito.subtotal();
-    const descuento = this.carrito.descuentoEscalonado();
-    const igv = this.carrito.igv();
-    const total = this.carrito.total();
-    console.log('\nSubtotal: S/' + subtotal.toFixed(2));
-    console.log('Descuento: S/' + descuento.toFixed(2));
-    console.log('IGV (18%): S/' + igv.toFixed(2));
-    console.log('TOTAL FINAL: S/' + total.toFixed(2));
-  }
+        // El método Carrito.agregar ya valida que cantidad > 0
+        const success = this.carrito.agregar(producto, cantidad);
+
+        if (success) {
+            console.log(`\n[ÉXITO] ${cantidad}x ${producto.nombre} agregado al carrito.`);
+        }
+        return success;
+    }
+
+    /**
+     * Finaliza la compra, registra la venta y vacía el carrito.
+     * Este es el método que será sobreescrito por TiendaOnline (Polimorfismo).
+     * @param {Cliente} cliente - El cliente que realiza la compra.
+     * @returns {object | null} Un resumen de la transacción o null si el carrito está vacío.
+     */
+    finalizarCompra(cliente) {
+        if (this.carrito.items().length === 0) {
+            console.error("\n[ERROR] El carrito está vacío. No se puede finalizar la compra.");
+            return null;
+        }
+
+        const itemsVendidos = this.carrito.items();
+        const totalFinal = this.carrito.total();
+
+        // 1. Agregar al historial de ventas de la tienda
+        this.ventas.push(...itemsVendidos);
+        
+        // 2. Agregar la compra al historial del cliente
+        cliente.agregarCompra(itemsVendidos);
+
+        // 3. Vaciar el carrito
+        this.carrito.vaciar();
+
+        return {
+            total: totalFinal,
+            items: itemsVendidos.length,
+            nombreCliente: cliente.nombre,
+            envio: 0 // Envío por defecto en tienda física
+        };
+    }
 }

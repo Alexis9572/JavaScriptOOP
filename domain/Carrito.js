@@ -1,51 +1,137 @@
 import { ItemCarrito } from './ItemCarrito.js';
-
 export class Carrito {
-  #items = [];
+    // Atributo privado para encapsular la lista de ítems.
+    #items; 
+    constructor() {
+        this.#items = [];
+    }
 
-  agregar(producto, cantidad) {
-    if (!producto) throw new Error('Producto inválido');
-    if (!cantidad || Number.isNaN(Number(cantidad)) || Number(cantidad) <= 0) throw new Error('Cantidad inválida');
-    const exists = this.#items.find(it => it.producto.id === producto.id);
-    if (exists) exists.cantidad += Number(cantidad);
-    else this.#items.push(new ItemCarrito(producto, Number(cantidad)));
-    return true;
-  }
+    /**
+     * Agrega un producto al carrito. Si ya existe, acumula la cantidad.
+     * @param {Producto} producto - El producto a agregar.
+     * @param {number} cantidad - La cantidad a agregar (debe ser > 0).
+     * @returns {boolean} true si se agregó/actualizó con éxito.
+     */
+    agregar(producto, cantidad) {
+        if (typeof cantidad !== 'number' || cantidad <= 0) {
+            console.error("ERROR: La cantidad debe ser numérica y mayor a 0.");
+            return false;
+        }
 
-  eliminarPorId(id) {
-    const idx = this.#items.findIndex(it => it.producto.id === Number(id));
-    if (idx === -1) return false;
-    this.#items.splice(idx, 1);
-    return true;
-  }
+        const existingItem = this.#items.find(item => item.producto.id === producto.id);
+        
+        if (existingItem) {
+            existingItem.cantidad += Math.floor(cantidad);
+        } else {
+            // Creamos un nuevo ItemCarrito y lo agregamos.
+            this.#items.push(new ItemCarrito(producto, cantidad));
+        }
+        return true;
+    }
 
-  vaciar() {
-    this.#items = [];
-  }
+    /**
+     * Elimina un ítem del carrito por ID de producto.
+     * @param {number} id - ID del producto a eliminar.
+     * @returns {boolean} true si se eliminó, false si no se encontró.
+     */
+    eliminarPorId(id) {
+        const initialLength = this.#items.length;
+        this.#items = this.#items.filter(item => item.producto.id !== id);
+        return this.#items.length < initialLength;
+    }
 
-  items() {
-    // retornamos copia para no exponer referencia privada
-    return this.#items.map(it => ({ producto: it.producto, cantidad: it.cantidad, subtotal: it.subtotal() }));
-  }
+    /**
+     * Vacía completamente el carrito.
+     */
+    vaciar() {
+        this.#items = [];
+    }
 
-  subtotal() {
-    return this.#items.reduce((a, it) => a + it.subtotal(), 0);
-  }
+    /**
+     * Obtiene una copia de los ítems del carrito (observador).
+     * @returns {ItemCarrito[]} Copia de la lista de ítems.
+     */
+    items() {
+        // Devolvemos una copia superficial para proteger el atributo privado
+        return [...this.#items];
+    }
 
-  descuentoEscalonado() {
-    const s = this.subtotal();
-    if (s >= 100) return s * 0.15;
-    if (s >= 50) return s * 0.10;
-    if (s >= 20) return s * 0.05;
-    return 0;
-  }
+    /**
+     * Calcula la suma de todos los subtotales de los ítems.
+     * @returns {number} Subtotal total del carrito.
+     */
+    subtotal() {
+        return this.#items.reduce((acc, item) => acc + item.subtotal(), 0);
+    }
 
-  igv() {
-    const base = this.subtotal() - this.descuentoEscalonado();
-    return base * 0.18;
-  }
+    /**
+     * Calcula el monto del descuento escalonado.
+     * @returns {number} Monto del descuento.
+     */
+    descuentoEscalonado() {
+        const subtotal = this.subtotal();
+        let porcentaje = 0;
 
-  total() {
-    return (this.subtotal() - this.descuentoEscalonado()) + this.igv();
-  }
+        if (subtotal >= 100) {
+            porcentaje = 0.15; // 15%
+        } else if (subtotal >= 50) {
+            porcentaje = 0.10; // 10%
+        } else if (subtotal >= 20) {
+            porcentaje = 0.05; // 5%
+        }
+
+        return subtotal * porcentaje;
+    }
+
+    /**
+     * Calcula el IGV (18%) después de aplicar el descuento.
+     * @returns {number} Monto del IGV.
+     */
+    igv() {
+        const subtotalConDescuento = this.subtotal() - this.descuentoEscalonado();
+        // IGV 18%
+        return subtotalConDescuento * 0.18; 
+    }
+
+    /**
+     * Calcula el total final de la compra.
+     * Total = (Subtotal - Descuento) + IGV.
+     * @returns {number} Total final.
+     */
+    total() {
+        const subtotalConDescuento = this.subtotal() - this.descuentoEscalonado();
+        return subtotalConDescuento + this.igv();
+    }
+
+    /**
+     * Devuelve el subtotal formateado.
+     * @returns {string}
+     */
+    subtotalFormateado() {
+        return this.subtotal().toFixed(2);
+    }
+
+    /**
+     * Devuelve el descuento formateado.
+     * @returns {string}
+     */
+    descuentoFormateado() {
+        return this.descuentoEscalonado().toFixed(2);
+    }
+    
+    /**
+     * Devuelve el IGV formateado.
+     * @returns {string}
+     */
+    igvFormateado() {
+        return this.igv().toFixed(2);
+    }
+
+    /**
+     * Devuelve el total formateado.
+     * @returns {string}
+     */
+    totalFormateado() {
+        return this.total().toFixed(2);
+    }
 }

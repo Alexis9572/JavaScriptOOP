@@ -1,13 +1,23 @@
-export default [
-  { id: 1, nombre: 'pan', precio: 2.00, categoria: 'panadería' },
-  { id: 2, nombre: 'leche', precio: 3.50, categoria: 'lácteos' },
-  { id: 3, nombre: 'queso', precio: 7.00, categoria: 'lácteos' },
-  { id: 4, nombre: 'galletas', precio: 4.00, categoria: 'snacks' },
-  { id: 5, nombre: 'croissant', precio: 5.50, categoria: 'panadería' },
-  { id: 6, nombre: 'torta', precio: 25.00, categoria: 'repostería' },
-  { id: 7, nombre: 'mantequilla', precio: 6.00, categoria: 'lácteos' },
-  { id: 8, nombre: 'jamón', precio: 8.50, categoria: 'fiambres' },
-  { id: 9, nombre: 'café', precio: 3.00, categoria: 'bebidas' },
-  { id: 10, nombre: 'jugo', precio: 4.50, categoria: 'bebidas' },
-  { id: 11, nombre: 'donut', precio: 2.50, categoria: 'repostería' }
+// data/productos.js
+
+/**
+ * Datos iniciales para el catálogo de productos.
+ * id: numérico único
+ * nombre: string
+ * precio: numérico
+ * categoria: string
+ */
+export const PRODUCTOS_INICIALES = [
+    { id: 1, nombre: "Pan Baguette", precio: 2.50, categoria: "Panadería" },
+    { id: 2, nombre: "Mantequilla (250g)", precio: 6.80, categoria: "Lácteos" },
+    { id: 3, nombre: "Galletas Soda", precio: 1.20, categoria: "Snacks" },
+    { id: 4, nombre: "Agua Mineral (1L)", precio: 3.00, categoria: "Bebidas" },
+    { id: 5, nombre: "Leche Fresca (1L)", precio: 5.50, categoria: "Lácteos" },
+    { id: 6, nombre: "Cereal Integral", precio: 15.90, categoria: "Desayuno" },
+    { id: 7, nombre: "Jugo de Naranja (1L)", precio: 7.40, categoria: "Bebidas" },
+    { id: 8, nombre: "Queso Parmesano (100g)", precio: 12.00, categoria: "Lácteos" },
+    { id: 9, nombre: "Chips de Papa (Grande)", precio: 4.80, categoria: "Snacks" },
+    { id: 10, nombre: "Queque de Vainilla", precio: 18.50, categoria: "Panadería" },
+    { id: 11, nombre: "Café Molido (250g)", precio: 22.00, categoria: "Bebidas" },
+    { id: 12, nombre: "Jamón de Pavo (200g)", precio: 9.90, categoria: "Embutidos" }
 ];

@@ -1,27 +1,27 @@
-# Mini-ERP Delicia (OOP, ES Modules)
+# Mini ERP Delicia Online
 
-Estructura del proyecto y uso.
+Este proyecto implementa un sistema básico de gestión de ventas y reportes (Mini ERP) utilizando una arquitectura basada en Programación Orientada a Objetos (OOP) en Node.js, siguiendo el estándar ES Modules.
 
-## Requisitos
-- Node.js v16+ (soporte a ES Modules)
+## 2. Cómo Ejecutar
 
-## Instalación
-```bash
-cd mini-erp-delicia-oop
-npm install
-```
+### Requisitos
 
-## Ejecutar
-```bash
-node app.js
-```
+* Node.js
 
-## Diseño
-- Clases: Producto, ItemCarrito, Carrito, Catalogo, Cliente, Tienda, TiendaOnline
-- Servicios: TicketService, ReporteService
-- app.js actúa como MenuController
+### Instalación y Ejecución
 
-## Notas
-- `package.json` usa "type": "module" para ESM.
-- Se usa `prompt-sync` para entrada en consola y `chalk` para colores.
-- Toda la información vive en memoria.
+1.  Asegúrate de tener instalado Node.js.
+2.  Navega a la carpeta principal del proyecto (`mini-erp-delicia/`).
+3.  Instala las dependencias (se requiere `chalk` y `prompt-sync`):
+
+    ```bash
+    npm install
+    ```
+
+4.  Ejecuta la aplicación:
+
+    ```bash
+    npm start
+    # o directamente:
+    # node app.js
+    ```

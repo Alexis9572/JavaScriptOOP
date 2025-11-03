@@ -6,17 +6,41 @@ import { Producto } from './domain/Producto.js';
 import { Catalogo } from './domain/Catalogo.js';
 import { Cliente } from './domain/Cliente.js';
 import { TiendaOnline } from './core/TiendaOnline.js';
+import { Tienda } from './core/Tienda.js';
 import { ReporteService } from './services/ReporteService.js';
 import { TicketService } from './services/TicketService.js';
 import { PRODUCTOS_INICIALES } from './data/productos.js';
 
+
+
 function inicializarApp() {
+    console.log(chalk.bold.yellow("\n=== Selección de Tipo de Tienda ==="));
+    console.log("1. Tienda Física");
+    console.log("2. Tienda Online");
+
+    let tipo = '';
+    do {
+        tipo = prompt(chalk.cyan("Seleccione tipo de tienda (1 o 2): ")).trim();
+        if (tipo !== '1' && tipo !== '2') {
+            console.log(chalk.red("[ERROR] Opción inválida. Ingrese 1 o 2."));
+        }
+    } while (tipo !== '1' && tipo !== '2');
+
     const productos = PRODUCTOS_INICIALES.map(p => new Producto(p.id, p.nombre, p.precio, p.categoria));
     const catalogo = new Catalogo(productos);
-    const tienda = new TiendaOnline("Mini ERP Delicia Online", catalogo);
+    let tienda;
+    if (tipo === '1') {
+        tienda = new Tienda("Mini ERP Delicia (Física)", catalogo);
+        console.log(chalk.green("\n✔ Se ha creado la tienda física."));
+    } else {
+        tienda = new TiendaOnline("Mini ERP Delicia Online", catalogo);
+        console.log(chalk.green("\n✔ Se ha creado la tienda online."));
+    }
+
     const clientePrincipal = new Cliente("Usuario Invitado");
     return { tienda, clientePrincipal };
 }
+
 
 class MenuController {
     constructor(tienda, cliente) {
